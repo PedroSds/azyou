@@ -15,7 +15,7 @@ const AREA_CARDS = [
 ];
 
 export default function DailyHoroscope({ hideHeader }: { hideHeader?: boolean }) {
-  const { profile, chart } = useUserStore();
+  const { user, profile, chart } = useUserStore();
   const [mainPhrase, setMainPhrase] = useState('');
   const [areaReadings, setAreaReadings] = useState<Record<string, string>>({});
   const [advice, setAdvice] = useState('');
@@ -24,7 +24,9 @@ export default function DailyHoroscope({ hideHeader }: { hideHeader?: boolean })
   const moonPhase = getMoonPhase();
   const today = new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
 
-  const cacheKey = `azyou-horoscope-${new Date().toISOString().split('T')[0]}-${profile?.id}`;
+  // Usa data local (pt-BR) para não virar o dia às 21h do Brasil (que é 00h UTC)
+  const localDateStr = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+  const cacheKey = `azyou-horoscope-${localDateStr}-${user?.id || profile?.id}`;
 
   useEffect(() => {
     if (profile && chart) {
@@ -38,11 +40,13 @@ export default function DailyHoroscope({ hideHeader }: { hideHeader?: boolean })
     if (cached) {
       try {
         const data = JSON.parse(cached);
-        setMainPhrase(data.mainPhrase);
-        setAreaReadings(data.areaReadings);
-        setAdvice(data.advice);
-        setLoading(false);
-        return;
+        if (data && data.mainPhrase) {
+          setMainPhrase(data.mainPhrase);
+          setAreaReadings(data.areaReadings || {});
+          setAdvice(data.advice || '');
+          setLoading(false);
+          return;
+        }
       } catch {}
     }
 
