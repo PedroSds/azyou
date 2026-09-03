@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Story+Script&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cosmic-bg text-cosmic-star font-sans antialiased;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-cosmic-accent/40 rounded-full;
+  }
+
+  ::selection {
+    @apply bg-cosmic-accent/30 text-white;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-cosmic-card border border-cosmic-border rounded-2xl shadow-sm;
+  }
+
+  .glass-card-hover {
+    @apply glass-card hover:shadow-md hover:border-cosmic-accent/20 transition-all duration-300;
+  }
+
+  .cosmic-button {
+    @apply bg-cosmic-accent hover:opacity-90 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-200 active:scale-95;
+  }
+
+  .cosmic-button-outline {
+    @apply border-2 border-cosmic-accent text-cosmic-accent hover:bg-cosmic-accent hover:text-black font-semibold py-3 px-6 rounded-xl transition-all duration-200 active:scale-95;
+  }
+
+  .gold-button {
+    @apply bg-cosmic-accent text-black font-semibold py-3 px-6 rounded-xl transition-all duration-200 active:scale-95 shadow-md;
+  }
+
+  .input-cosmic {
+    @apply bg-white border border-cosmic-border rounded-xl px-4 py-3 text-cosmic-star placeholder-cosmic-muted focus:outline-none focus:border-cosmic-accent focus:ring-1 focus:ring-cosmic-accent transition-all duration-200 w-full shadow-sm;
+  }
+
+  .star {
+    @apply absolute rounded-full bg-cosmic-border animate-twinkle;
+  }
+
+  .section-title {
+    @apply font-serif text-2xl text-cosmic-star font-light;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-cosmic-gold to-cosmic-goldLight bg-clip-text text-transparent;
+  }
+
+  .gradient-text-violet {
+    @apply bg-gradient-to-r from-cosmic-lilac to-cosmic-violet bg-clip-text text-transparent;
+  }
+
+  .bottom-nav-safe {
+    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+  }
+
+  /* Estilo unificado de item/aba selecionado(a) no app */
+  .tab-active {
+    @apply bg-cosmic-accent/15 text-cosmic-star font-semibold border border-cosmic-accent/30;
+  }
+  .tab-inactive {
+    @apply text-cosmic-muted hover:text-cosmic-star;
+  }
+}
+
+@layer utilities {
+  .bg-white\/8 {
+    background-color: rgba(255,255,255,0.08);
+  }
+
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Stars background animation */
+.stars-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.stars-container::before,
+.stars-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 80% 20%, rgba(255,255,255,0.9) 0%, transparent 100%),
+    radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 90% 50%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 10% 60%, rgba(255,255,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 70% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(2px 2px at 30% 50%, rgba(200,180,255,0.6) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 35%, rgba(255,255,255,0.7) 0%, transparent 100%);
+  background-size: 400px 400px;
+  animation: starField 120s linear infinite;
+}
+
+.stars-container::after {
+  background-size: 600px 600px;
+  animation-duration: 180s;
+  animation-direction: reverse;
+  opacity: 0.6;
+}
+
+@keyframes starField {
+  from { transform: translateY(0) rotate(0deg); }
+  to { transform: translateY(-400px) rotate(2deg); }
+}
+
+/* Nebula glow effect */
+.nebula {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Tarot card flip */
+.tarot-card {
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.tarot-card-inner {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tarot-card.flipped .tarot-card-inner {
+  transform: rotateY(180deg);
+}
+
+.tarot-card-front,
+.tarot-card-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.tarot-card-back {
+  transform: rotateY(180deg);
+}
+
+/* Typing cursor */
+.typing-cursor::after {
+  content: '|';
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Zodiac wheel */
+.zodiac-ring {
+  animation: spin 60s linear infinite;
+}
+
+/* Smooth page transitions */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
