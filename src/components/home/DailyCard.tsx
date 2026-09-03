@@ -145,26 +145,31 @@ Por favor, crie uma interpretação personalizada e profunda desta carta, conect
 
 Seja caloroso, inspirador e específico. Máximo 3 parágrafos.`;
 
-    const response = await getQuickAIResponse(prompt, context);
-    setAiInterpretation(response);
+    try {
+      const response = await getQuickAIResponse(prompt, context);
+      setAiInterpretation(response);
 
-    if (user) {
-      localStorage.setItem(storageKey, JSON.stringify({
-        usuario_id: user.id,
-        data_carta: today,
-        nome_carta: card.name,
-        numero_carta: card.number,
-        significado_carta: card.upright,
-        interpretacao_ia: response,
-      }));
+      if (user) {
+        localStorage.setItem(storageKey, JSON.stringify({
+          usuario_id: user.id,
+          data_carta: today,
+          nome_carta: card.name,
+          numero_carta: card.number,
+          significado_carta: card.upright,
+          interpretacao_ia: response,
+        }));
 
-      await supabase.from('cartas_do_dia')
-        .update({ interpretacao_ia: response })
-        .eq('usuario_id', user.id)
-        .eq('data_carta', today);
+        await supabase.from('cartas_do_dia')
+          .update({ interpretacao_ia: response })
+          .eq('usuario_id', user.id)
+          .eq('data_carta', today);
+      }
+    } catch (err) {
+      console.error('Tarot AI error:', err);
+      // alert or set error state if needed
+    } finally {
+      setLoadingAI(false);
     }
-
-    setLoadingAI(false);
   };
 
   const romanNum = ROMAN_NUMERALS[card.number] ?? card.number;

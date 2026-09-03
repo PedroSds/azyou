@@ -19,6 +19,7 @@ export default function DailyHoroscope({ hideHeader }: { hideHeader?: boolean })
   const [mainPhrase, setMainPhrase] = useState('');
   const [areaReadings, setAreaReadings] = useState<Record<string, string>>({});
   const [advice, setAdvice] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeCard, setActiveCard] = useState<string | null>(null);
   const moonPhase = getMoonPhase();
@@ -50,6 +51,7 @@ export default function DailyHoroscope({ hideHeader }: { hideHeader?: boolean })
       } catch {}
     }
 
+    setError(null);
     setLoading(true);
     if (!profile || !chart) return;
 
@@ -135,13 +137,13 @@ Retorne APENAS um JSON válido (sem markdown):
         areaReadings: data.areas,
         advice: data.advice,
       }));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Horoscope error:', err);
+      setError('A Azy está sobrecarregada lendo as estrelas de muitas pessoas agora. Tente novamente em alguns instantes.');
     } finally {
       setLoading(false);
     }
   };
-
 
   if (!profile || !chart) return null;
 
@@ -166,6 +168,18 @@ Retorne APENAS um JSON válido (sem markdown):
             </div>
           </div>
         </>
+      )}
+
+      {error && (
+        <div className="glass-card p-4 mb-6 border-red-500/30 bg-red-50/50">
+          <p className="text-red-500 text-sm mb-3">{error}</p>
+          <button 
+            onClick={loadHoroscope}
+            className="flex items-center gap-2 text-xs font-semibold px-4 py-2 bg-white rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors"
+          >
+            <RefreshCw size={14} /> Tentar novamente
+          </button>
+        </div>
       )}
 
       {/* Main phrase (Mantra) */}
