@@ -153,10 +153,14 @@ function MapDetailView({ chart, name }: { chart: any; name: string }) {
                     <span className="text-lg">{info.emoji}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-cosmic-star text-xs font-medium">{info.name} — {info.theme}</p>
-                      <p className="text-cosmic-muted text-[11px]">
-                        {house.sign}
-                        {planetsInHouse.length > 0 ? ` · ${planetsInHouse.join(', ')}` : ''}
-                      </p>
+                      <div className="text-cosmic-muted text-[11px] mt-0.5">
+                        <span>Cúspide em {house.sign}</span>
+                        {planetsInHouse.length > 0 && (
+                          <span className="block text-cosmic-text mt-0.5">
+                            Planetas aqui: <span className="text-cosmic-star">{planetsInHouse.join(', ')}</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
