@@ -1,5 +1,5 @@
 const AI_BASE_URL = '/api/ai';
-const AI_API_KEY = 'sk-1kwwp6c38uwq5z90h8fqfcrik7fa1lbj';
+const AI_API_KEY = 'sk-ge4r81beyfmbkxgcm81ive0n2arnwmg0';
 const AI_MODEL = 'deepseek-v4-flash';
 
 export interface PlanetInfo {
