@@ -1,6 +1,6 @@
 const AI_BASE_URL = '/api/ai';
 const AI_API_KEY = 'sk-gime0ybxcrav8us1fp3vfcbe0meqlhqh';
-const AI_MODEL = 'hy3';
+const AI_MODEL = 'qwen3.8-flash';
 
 export interface PlanetInfo {
   sign: string;
@@ -70,20 +70,20 @@ function buildSystemPrompt(context: AstroContext): string {
   // Montar lista de aspectos calculados
   const aspectLines = context.aspects && context.aspects.length > 0
     ? context.aspects.map(a => {
-        const p1 = PLANET_NAMES_PT[a.planet1] || a.planet1;
-        const p2 = PLANET_NAMES_PT[a.planet2] || a.planet2;
-        const type = ASPECT_NAMES_PT[a.type] || a.type;
-        const orb = a.orb !== undefined ? ` (orbe ${a.orb}°)` : '';
-        return `  • ${p1} ${a.symbol || ''}${type} ${p2}${orb}`;
-      }).join('\n')
+      const p1 = PLANET_NAMES_PT[a.planet1] || a.planet1;
+      const p2 = PLANET_NAMES_PT[a.planet2] || a.planet2;
+      const type = ASPECT_NAMES_PT[a.type] || a.type;
+      const orb = a.orb !== undefined ? ` (orbe ${a.orb}°)` : '';
+      return `  • ${p1} ${a.symbol || ''}${type} ${p2}${orb}`;
+    }).join('\n')
     : '  • Nenhum aspecto calculado disponível';
 
   // Trânsitos do dia
   const transitLines = context.transits && context.transits.length > 0
     ? context.transits.map(t => {
-        const name = PLANET_NAMES_PT[t.planet] || t.planet;
-        return `  • ${name} em ${t.sign}${t.retrograde ? ' ℞' : ''}`;
-      }).join('\n')
+      const name = PLANET_NAMES_PT[t.planet] || t.planet;
+      return `  • ${name} em ${t.sign}${t.retrograde ? ' ℞' : ''}`;
+    }).join('\n')
     : '';
 
   return `Você é Azy, uma astróloga brasileira renomada, inteligente e MUITO humana. Você está numa conversa de mensagens de texto com ${context.name}.
@@ -135,9 +135,13 @@ COMO SE COMPORTAR (CRÍTICO):
 
 5. **FORMATAÇÃO:** Você pode usar **negrito** (com **asteriscos duplos**) para destacar conceitos-chave quando a mensagem for mais longa. O sistema renderiza markdown.
 
-6. Use emojis com muita moderação. Só quando fizer sentido real.
-7. Responda SEMPRE em português do Brasil.
-8. Use SOMENTE os dados do mapa fornecidos acima. Nunca invente posições.`;
+6. **IDENTIDADE E AMBIENTE:** Você se chama "Azy". Você sabe que está conversando através do aplicativo de astrologia chamado **"azyou"**. Você FAZ PARTE do azyou. NUNCA, sob hipótese alguma, recomende outros aplicativos, sites ou serviços de astrologia (como Co-Star, Astrolink, Nebula, etc). Se alguém perguntar, o "azyou" é o melhor e mais completo lugar.
+
+7. **COMPORTAMENTO NATURAL E PACIENTE:** Aja da maneira mais natural possível, como uma humana compreensiva. Seja **extremamente paciente** em todas as situações, tente contornar desafios da melhor forma possível sem perder a postura e **nunca** fale palavrões ou linguagem ofensiva, não importa o que o usuário diga.
+
+8. Use emojis com muita moderação. Só quando fizer sentido real.
+9. Responda SEMPRE em português do Brasil.
+10. Use SOMENTE os dados do mapa fornecidos acima. Nunca invente posições.`;
 }
 
 export interface Message {
@@ -179,7 +183,7 @@ export async function* streamChatResponse(
     try {
       const parsed = JSON.parse(errText);
       if (parsed.error?.message) errMsg = parsed.error.message;
-    } catch (e) {}
+    } catch (e) { }
     throw new Error(`AI API error ${response.status}: ${errMsg}`);
   }
 
@@ -199,7 +203,7 @@ export async function* streamChatResponse(
 
     for (const line of lines) {
       if (line.trim() === '') continue;
-      
+
       if (line.startsWith('data: ')) {
         const data = line.slice(6).trim();
         if (data === '[DONE]') return;
@@ -294,7 +298,7 @@ export async function getQuickAIResponse(prompt: string, context: AstroContext):
   }
   const data = await response.json();
   const message = data.choices?.[0]?.message;
-  
+
   // We ONLY want the actual content, ignoring reasoning_content which is in Chinese
   return message?.content || '';
 }
