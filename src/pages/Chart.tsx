@@ -173,7 +173,7 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
           const py = cy + pr * Math.sin(angle);
           const emoji = ({ sun: '☀', moon: '☽', mercury: '☿', venus: '♀', mars: '♂', jupiter: '♃', saturn: '♄', uranus: '♅', neptune: '♆', pluto: '♇' } as Record<string, string>)[key] || '·';
           return (
-            <g key={key} onClick={() => getAIForPlanet(key)} className="cursor-pointer">
+            <g key={key}>
               <circle cx={px} cy={py} r={8} fill="rgba(13,13,43,0.9)" stroke="rgba(124,58,237,0.5)" strokeWidth="1" />
               <text x={px} y={py + 1} textAnchor="middle" dominantBaseline="middle" fontSize="8" fill="#A78BFA">{emoji}</text>
             </g>
@@ -199,7 +199,6 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
         {/* SVG Chart */}
         <div className="glass-card p-4 mb-6">
           <ChartSVG />
-          <p className="text-cosmic-muted text-xs text-center mt-2">Toque nos planetas para ver interpretações</p>
         </div>
 
         {/* Menu de Abas Padronizado */}
@@ -248,11 +247,9 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
                   const name = PLANET_NAMES[key] || key;
                   const signInfo = SIGN_DESCRIPTIONS[planet.sign];
                   return (
-                    <motion.button
+                    <div
                       key={key}
-                      onClick={() => getAIForPlanet(key)}
-                      className="w-full glass-card p-4 flex items-center gap-3 hover:border-cosmic-accent/30 transition-all active:scale-98"
-                      whileHover={{ scale: 1.01 }}
+                      className="w-full glass-card p-4 flex items-center gap-3"
                     >
                       <span className="text-2xl">{({ sun: '☀️', moon: '🌙', mercury: '☿', venus: '♀️', mars: '♂️', jupiter: '⚡', saturn: '🪐', uranus: '💫', neptune: '🌊', pluto: '🔮' } as Record<string, string>)[key] || '⭐'}</span>
                       <div className="text-left flex-1">
@@ -264,8 +261,7 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
                           {signInfo.element}
                         </span>
                       )}
-                      <Sparkles size={14} className="text-cosmic-purple/60" />
-                    </motion.button>
+                    </div>
                   );
                 })}
               </div>
@@ -283,19 +279,16 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
                     .map(([k]) => ({ key: k, name: PLANET_NAMES[k] }));
 
                   return (
-                    <motion.button
+                    <div
                       key={num}
-                      onClick={() => getAIForHouse(houseNum)}
-                      className="w-full glass-card p-4 flex items-center gap-3 hover:border-cosmic-accent/30 transition-all active:scale-98"
-                      whileHover={{ scale: 1.01 }}
+                      className="w-full glass-card p-4 flex items-center gap-3"
                     >
                       <span className="text-xl">{info.emoji}</span>
                       <div className="text-left flex-1">
                         <p className="text-cosmic-star text-sm font-medium">{info.name} — {info.theme}</p>
                         <p className="text-cosmic-muted text-xs">{house.sign} {planetsInHouse.length > 0 ? `· ${planetsInHouse.map(p => p.name).join(', ')}` : ''}</p>
                       </div>
-                      <Sparkles size={14} className="text-cosmic-lilac/60" />
-                    </motion.button>
+                    </div>
                   );
                 })}
               </div>
@@ -309,7 +302,7 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
                   const p2Name = PLANET_NAMES[aspect.planet2] || aspect.planet2;
                   const aspectNames: Record<string, string> = {
                     conjunction: 'Conjunção', opposition: 'Oposição', trine: 'Trígono',
-                    square: 'Quadratura', sextile: 'Sextil', quincunx: 'Quincúncio',
+                    square: 'Quadratura', sextile: 'Sextil', quincunx: 'Quincúncio', semisquare: 'Semiquadratura'
                   };
                   return (
                     <div key={i} className="glass-card p-3 flex items-center gap-3">
