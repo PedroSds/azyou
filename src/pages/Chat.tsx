@@ -145,6 +145,24 @@ export default function Chat() {
       aiContext: profile.ai_context || {}, // Semantic memory
     };
 
+    try {
+      const localDateStr = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+      const horoscopeKey = `azyou-horoscope-${localDateStr}-${user?.id || profile?.id}`;
+      const cachedHoroscope = localStorage.getItem(horoscopeKey);
+      if (cachedHoroscope) {
+        context.dailyHoroscope = JSON.parse(cachedHoroscope);
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      const tarotKey = `azyou-tarot-${today}-${user?.id || 'guest'}`;
+      const cachedTarot = localStorage.getItem(tarotKey);
+      if (cachedTarot) {
+        context.dailyTarot = JSON.parse(cachedTarot);
+      }
+    } catch (err) {
+      console.warn('Failed to parse daily context', err);
+    }
+
     let fullResponse = '';
     try {
       for await (const token of streamChatResponse(

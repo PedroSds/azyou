@@ -44,6 +44,8 @@ export interface AstroContext {
   transits?: Array<{ planet: string; sign: string; retrograde: boolean }>;
   // Semantic memory — summarized life context from past conversations
   aiContext?: Record<string, any>;
+  dailyHoroscope?: any;
+  dailyTarot?: any;
 }
 
 const PLANET_NAMES_PT: Record<string, string> = {
@@ -111,6 +113,24 @@ ${context.aiContext && Object.keys(context.aiContext).length > 0 ? `
 MEMÓRIA DE VIDA DE ${(context.name || 'Usuário').toUpperCase()} (contexto de conversas anteriores):
 ${Object.entries(context.aiContext).map(([k, v]) => `  • ${k}: ${v}`).join('\n')}
 Use esse contexto de vida para personalizar suas respostas sem precisar perguntar novamente.
+═══════════════════════════════════════` : ''}
+${context.dailyHoroscope ? `
+═══════════════════════════════════════
+HORÓSCOPO DO DIA (Exibido na Home do app hoje):
+Frase principal: ${context.dailyHoroscope.mainPhrase || ''}
+Amor: ${context.dailyHoroscope.areaReadings?.love || ''}
+Dinheiro: ${context.dailyHoroscope.areaReadings?.money || ''}
+Emoções: ${context.dailyHoroscope.areaReadings?.emotions || ''}
+Energia: ${context.dailyHoroscope.areaReadings?.energy || ''}
+Conselho: ${context.dailyHoroscope.advice || ''}
+Lembre-se: Essas previsões foram geradas COM BASE NO MAPA ASTRAL (trânsitos e mapa natal). Se o usuário perguntar, reafirme que tudo no app é 100% focado no mapa único dele.
+═══════════════════════════════════════` : ''}
+${context.dailyTarot ? `
+═══════════════════════════════════════
+CARTA DE TAROT DO DIA (Tirada pelo usuário hoje):
+Carta: ${context.dailyTarot.nome_carta || ''}
+Significado geral: ${context.dailyTarot.significado_carta || ''}
+Lembre-se: Se o usuário perguntar sobre o tarot, valide que a carta se conecta à energia atual dele.
 ═══════════════════════════════════════` : ''}
 
 ═══════════════════════════════════════
