@@ -211,7 +211,7 @@ Retorne APENAS um JSON válido (sem markdown):
             </div>
           ) : (
             <div className="space-y-6">
-              <p className="text-cosmic-star font-serif text-lg sm:text-xl leading-relaxed italic pr-4">
+              <p className="text-cosmic-star font-serif text-lg sm:text-xl leading-relaxed pr-4">
                 "{mainPhrase}"
               </p>
               
