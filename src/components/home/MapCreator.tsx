@@ -239,59 +239,59 @@ function ChartWheel({ chart }: { chart: any }) {
   });
 
   return (
-    <svg viewBox="0 0 300 300" className="w-full max-w-[280px] mx-auto">
-      <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(124,58,237,0.3)" strokeWidth="1" />
-      <circle cx={cx} cy={cy} r={r - 20} fill="none" stroke="rgba(124,58,237,0.2)" strokeWidth="0.5" />
-      <circle cx={cx} cy={cy} r={80} fill="rgba(13,13,43,0.8)" stroke="rgba(124,58,237,0.2)" strokeWidth="0.5" />
-      <circle cx={cx} cy={cy} r={40} fill="rgba(13,13,43,0.6)" stroke="rgba(212,175,55,0.2)" strokeWidth="0.5" />
+      <svg viewBox="0 0 300 300" className="w-full max-w-[320px] mx-auto filter drop-shadow-md">
+        <circle cx={cx} cy={cy} r={r} fill="rgba(255,255,255,0.03)" stroke="rgba(167,139,250,0.5)" strokeWidth="1" />
+        <circle cx={cx} cy={cy} r={r - 20} fill="rgba(255,255,255,0.02)" stroke="rgba(167,139,250,0.3)" strokeWidth="0.5" />
+        <circle cx={cx} cy={cy} r={80} fill="rgba(0,0,0,0.15)" stroke="rgba(167,139,250,0.2)" strokeWidth="0.5" />
+        <circle cx={cx} cy={cy} r={40} fill="rgba(0,0,0,0.1)" stroke="rgba(212,175,55,0.2)" strokeWidth="0.5" />
 
-      {Array.from({ length: 12 }, (_, i) => {
-        const angle = ((i - signIndex) * 30 - 90) * Math.PI / 180;
-        return (
-          <line
-            key={i}
-            x1={cx + 60 * Math.cos(angle)}
-            y1={cy + 60 * Math.sin(angle)}
-            x2={cx + r * Math.cos(angle)}
-            y2={cy + r * Math.sin(angle)}
-            stroke="rgba(124,58,237,0.25)"
-            strokeWidth="0.5"
-          />
-        );
-      })}
+        {Array.from({ length: 12 }, (_, i) => {
+          const angle = ((i - signIndex) * 30 - 90) * Math.PI / 180;
+          return (
+            <line
+              key={i}
+              x1={cx + 60 * Math.cos(angle)}
+              y1={cy + 60 * Math.sin(angle)}
+              x2={cx + r * Math.cos(angle)}
+              y2={cy + r * Math.sin(angle)}
+              stroke="rgba(167,139,250,0.3)"
+              strokeWidth="0.5"
+            />
+          );
+        })}
 
-      {signLabels.map(({ sign, x2, y2 }, i) => (
-        <foreignObject key={i} x={x2 - 8} y={y2 - 8} width={16} height={16}>
-          <AstroIcon name={SIGNS_EN_MAP[sign] || 'aries'} className="w-4 h-4 text-purple-300 opacity-60" />
-        </foreignObject>
-      ))}
+        {signLabels.map(({ sign, x2, y2 }, i) => (
+          <foreignObject key={i} x={x2 - 8} y={y2 - 8} width={16} height={16}>
+            <AstroIcon name={SIGNS_EN_MAP[sign] || 'aries'} className="w-4 h-4 text-purple-200 opacity-80" />
+          </foreignObject>
+        ))}
 
-      {(chart?.aspects || []).slice(0, 15).map((aspect: any, i: number) => {
-        const p1 = planets[aspect.planet1];
-        const p2 = planets[aspect.planet2];
-        if (!p1 || !p2) return null;
-        const p1SignI = SIGNS.indexOf(p1.sign) === -1 ? 0 : SIGNS.indexOf(p1.sign);
-        const p2SignI = SIGNS.indexOf(p2.sign) === -1 ? 0 : SIGNS.indexOf(p2.sign);
-        const lon1 = (p1SignI * 30 + (p1.degree || 0) - signIndex * 30 - 90) * Math.PI / 180;
-        const lon2 = (p2SignI * 30 + (p2.degree || 0) - signIndex * 30 - 90) * Math.PI / 180;
-        return (
-          <line key={i} x1={cx + 70 * Math.cos(lon1)} y1={cy + 70 * Math.sin(lon1)}
-            x2={cx + 70 * Math.cos(lon2)} y2={cy + 70 * Math.sin(lon2)}
-            stroke={ASPECT_COLORS[aspect.type] || '#ffffff'}
-            strokeWidth="0.4" opacity="0.4" />
-        );
-      })}
+        {(chart?.aspects || []).slice(0, 15).map((aspect: any, i: number) => {
+          const p1 = planets[aspect.planet1];
+          const p2 = planets[aspect.planet2];
+          if (!p1 || !p2) return null;
+          const p1SignI = SIGNS.indexOf(p1.sign) === -1 ? 0 : SIGNS.indexOf(p1.sign);
+          const p2SignI = SIGNS.indexOf(p2.sign) === -1 ? 0 : SIGNS.indexOf(p2.sign);
+          const lon1 = (p1SignI * 30 + (p1.degree || 0) - signIndex * 30 - 90) * Math.PI / 180;
+          const lon2 = (p2SignI * 30 + (p2.degree || 0) - signIndex * 30 - 90) * Math.PI / 180;
+          return (
+            <line key={i} x1={cx + 70 * Math.cos(lon1)} y1={cy + 70 * Math.sin(lon1)}
+              x2={cx + 70 * Math.cos(lon2)} y2={cy + 70 * Math.sin(lon2)}
+              stroke={ASPECT_COLORS[aspect.type] || '#ffffff'}
+              strokeWidth="0.8" opacity="0.6" />
+          );
+        })}
 
-      {planetsPositions.map(({ key, px, py }) => (
-        <foreignObject key={key} x={px - 7} y={py - 7} width={14} height={14}>
-          <div className="w-full h-full flex items-center justify-center rounded-full bg-cosmic-bg border border-cosmic-accent/50">
-             <AstroIcon name={key} className="w-3 h-3 text-purple-300" />
-          </div>
-        </foreignObject>
-      ))}
+        {planetsPositions.map(({ key, px, py }) => (
+          <foreignObject key={key} x={px - 8} y={py - 8} width={16} height={16}>
+            <div className="w-full h-full flex items-center justify-center rounded-full bg-cosmic-bg/40 border border-white/20 backdrop-blur-md shadow-[0_0_8px_rgba(167,139,250,0.4)]">
+               <AstroIcon name={key} className="w-3.5 h-3.5 text-white" />
+            </div>
+          </foreignObject>
+        ))}
 
-      <circle cx={cx} cy={cy} r={4} fill="#D4AF37" opacity="0.8" />
-    </svg>
+        <circle cx={cx} cy={cy} r={4} fill="#D4AF37" opacity="0.8" />
+      </svg>
   );
 }
 

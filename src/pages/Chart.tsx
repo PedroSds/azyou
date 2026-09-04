@@ -120,11 +120,11 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
     });
 
     return (
-      <svg viewBox="0 0 300 300" className="w-full max-w-[280px] mx-auto">
-        <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(124,58,237,0.3)" strokeWidth="1" />
-        <circle cx={cx} cy={cy} r={r - 20} fill="none" stroke="rgba(124,58,237,0.2)" strokeWidth="0.5" />
-        <circle cx={cx} cy={cy} r={80} fill="rgba(13,13,43,0.8)" stroke="rgba(124,58,237,0.2)" strokeWidth="0.5" />
-        <circle cx={cx} cy={cy} r={40} fill="rgba(13,13,43,0.6)" stroke="rgba(212,175,55,0.2)" strokeWidth="0.5" />
+      <svg viewBox="0 0 300 300" className="w-full max-w-[320px] mx-auto filter drop-shadow-md">
+        <circle cx={cx} cy={cy} r={r} fill="rgba(255,255,255,0.03)" stroke="rgba(167,139,250,0.5)" strokeWidth="1" />
+        <circle cx={cx} cy={cy} r={r - 20} fill="rgba(255,255,255,0.02)" stroke="rgba(167,139,250,0.3)" strokeWidth="0.5" />
+        <circle cx={cx} cy={cy} r={80} fill="rgba(0,0,0,0.15)" stroke="rgba(167,139,250,0.2)" strokeWidth="0.5" />
+        <circle cx={cx} cy={cy} r={40} fill="rgba(0,0,0,0.1)" stroke="rgba(212,175,55,0.2)" strokeWidth="0.5" />
 
         {Array.from({ length: 12 }, (_, i) => {
           const signIndex = SIGNS.indexOf(chart.sun_sign || 'Áries');
@@ -136,7 +136,7 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
               y1={cy + 60 * Math.sin(angle)}
               x2={cx + r * Math.cos(angle)}
               y2={cy + r * Math.sin(angle)}
-              stroke="rgba(124,58,237,0.25)"
+              stroke="rgba(167,139,250,0.3)"
               strokeWidth="0.5"
             />
           );
@@ -144,7 +144,7 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
 
         {signLabels.map(({ sign, x2, y2 }, i) => (
           <foreignObject key={i} x={x2 - 8} y={y2 - 8} width={16} height={16}>
-            <AstroIcon name={SIGNS_EN_MAP[sign] || 'aries'} className="w-4 h-4 text-purple-300 opacity-60" />
+            <AstroIcon name={SIGNS_EN_MAP[sign] || 'aries'} className="w-4 h-4 text-purple-200 opacity-80" />
           </foreignObject>
         ))}
 
@@ -162,7 +162,7 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
           return (
             <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
               stroke={ASPECT_COLORS[aspect.type] || '#ffffff'}
-              strokeWidth="0.4" opacity="0.4" />
+              strokeWidth="0.8" opacity="0.6" />
           );
         })}
 
@@ -173,8 +173,10 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
           const px = cx + pr * Math.cos(angle);
           const py = cy + pr * Math.sin(angle);
           return (
-            <foreignObject key={key} x={px - 7} y={py - 7} width={14} height={14}>
-              <AstroIcon name={key} className="w-3 h-3 text-purple-300" />
+            <foreignObject key={key} x={px - 8} y={py - 8} width={16} height={16}>
+              <div className="w-full h-full flex items-center justify-center rounded-full bg-cosmic-bg/40 border border-white/20 backdrop-blur-md shadow-[0_0_8px_rgba(167,139,250,0.4)]">
+                 <AstroIcon name={key} className="w-3.5 h-3.5 text-white" />
+              </div>
             </foreignObject>
           );
         })}
@@ -187,14 +189,40 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
   return (
     <AppLayout>
       <div className="py-6">
-        <h1 className="font-serif text-3xl text-cosmic-star mb-1">🗺️ Meu Mapa Astral</h1>
-        <p className="text-cosmic-muted text-sm mb-6">
-          {chart.sun_sign && `☀️ ${chart.sun_sign}`}
-          {chart.moon_sign && ` · 🌙 ${chart.moon_sign}`}
-          {chart.ascendant && ` · ⬆️ ${chart.ascendant}`}
-        </p>
+        <div className="flex items-center gap-4 text-cosmic-star text-sm mb-6 font-medium bg-cosmic-bg/40 border border-cosmic-border rounded-full py-2 px-4 w-max shadow-md">
+          {chart.sun_sign && (
+             <div className="flex items-center gap-1.5">
+               <div className="w-5 h-5 rounded-full bg-amber-500/20 flex items-center justify-center">
+                 <AstroIcon name="sun" className="w-3.5 h-3.5 text-amber-400" />
+               </div>
+               {chart.sun_sign}
+             </div>
+          )}
+          {chart.moon_sign && (
+             <>
+               <span className="text-cosmic-muted opacity-30">|</span>
+               <div className="flex items-center gap-1.5">
+                 <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center">
+                   <AstroIcon name="moon" className="w-3.5 h-3.5 text-blue-300" />
+                 </div>
+                 {chart.moon_sign}
+               </div>
+             </>
+          )}
+          {chart.ascendant && (
+             <>
+               <span className="text-cosmic-muted opacity-30">|</span>
+               <div className="flex items-center gap-1.5">
+                 <div className="w-5 h-5 rounded-full bg-purple-500/20 flex items-center justify-center">
+                   <AstroIcon name="ascendant" className="w-3.5 h-3.5 text-purple-400" />
+                 </div>
+                 {chart.ascendant}
+               </div>
+             </>
+          )}
+        </div>
 
-        <div className="glass-card p-4 mb-6">
+        <div className="glass-card p-6 mb-6">
           <ChartSVG />
         </div>
 
