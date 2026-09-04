@@ -6,11 +6,22 @@ import { PLANET_NAMES, PLANET_SYMBOLS, SIGN_SYMBOLS, SIGNS } from '../services/a
 import { HOUSE_INFO, SIGN_DESCRIPTIONS } from '../data/astroData';
 import { getQuickAIResponse } from '../services/aiChat';
 import AppLayout from '../components/layout/AppLayout';
+import { AstroIcon } from '../components/ui/AstroIcons';
 import type { AstroContext } from '../services/aiChat';
 
 const ASPECT_COLORS: Record<string, string> = {
   conjunction: '#FFD700', trine: '#00FF88', sextile: '#00BFFF',
-  square: '#FF4444', opposition: '#FF8800', quincunx: '#CC44FF',
+  square: '#FF4444', opposition: '#FF8800', quincunx: '#CC44FF', semisquare: '#AAAAAA'
+};
+const ASPECT_NAMES: Record<string, string> = {
+  conjunction: 'Conjunção', opposition: 'Oposição', trine: 'Trígono',
+  square: 'Quadratura', sextile: 'Sextil', quincunx: 'Quincúncio', semisquare: 'Semiquadratura',
+};
+
+const SIGNS_EN_MAP: Record<string, string> = {
+  'Áries': 'aries', 'Touro': 'taurus', 'Gêmeos': 'gemini', 'Câncer': 'cancer',
+  'Leão': 'leo', 'Virgem': 'virgo', 'Libra': 'libra', 'Escorpião': 'scorpio',
+  'Sagitário': 'sagittarius', 'Capricórnio': 'capricorn', 'Aquário': 'aquarius', 'Peixes': 'pisces',
 };
 
 export default function ChartPage() {
@@ -100,28 +111,21 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
   const ChartSVG = () => {
     const cx = 150, cy = 150, r = 120;
     const signLabels = SIGNS.map((sign, i) => {
-      const angle = (i * 30 - 90) * Math.PI / 180;
       const midAngle = ((i + 0.5) * 30 - 90) * Math.PI / 180;
       const signIndex = SIGNS.indexOf(chart.sun_sign || 'Áries');
-      const rotatedAngle = ((i - signIndex) * 30 - 90) * Math.PI / 180;
       const midRotatedAngle = ((i - signIndex + 0.5) * 30 - 90) * Math.PI / 180;
-      const x1 = cx + r * Math.cos(rotatedAngle);
-      const y1 = cy + r * Math.sin(rotatedAngle);
       const x2 = cx + (r - 20) * Math.cos(midRotatedAngle);
       const y2 = cy + (r - 20) * Math.sin(midRotatedAngle);
-      return { sign, x1, y1, x2, y2, symbol: SIGN_SYMBOLS[i] };
+      return { sign, x2, y2 };
     });
 
     return (
       <svg viewBox="0 0 300 300" className="w-full max-w-[280px] mx-auto">
-        {/* Outer ring */}
         <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(124,58,237,0.3)" strokeWidth="1" />
         <circle cx={cx} cy={cy} r={r - 20} fill="none" stroke="rgba(124,58,237,0.2)" strokeWidth="0.5" />
-        {/* Inner chart area */}
         <circle cx={cx} cy={cy} r={80} fill="rgba(13,13,43,0.8)" stroke="rgba(124,58,237,0.2)" strokeWidth="0.5" />
         <circle cx={cx} cy={cy} r={40} fill="rgba(13,13,43,0.6)" stroke="rgba(212,175,55,0.2)" strokeWidth="0.5" />
 
-        {/* Sign dividers */}
         {Array.from({ length: 12 }, (_, i) => {
           const signIndex = SIGNS.indexOf(chart.sun_sign || 'Áries');
           const angle = ((i - signIndex) * 30 - 90) * Math.PI / 180;
@@ -138,14 +142,12 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
           );
         })}
 
-        {/* Sign symbols */}
-        {signLabels.map(({ symbol, x2, y2 }, i) => (
-          <text key={i} x={x2} y={y2} textAnchor="middle" dominantBaseline="middle" fontSize="10" fill="rgba(167,139,250,0.7)">
-            {symbol}
-          </text>
+        {signLabels.map(({ sign, x2, y2 }, i) => (
+          <foreignObject key={i} x={x2 - 8} y={y2 - 8} width={16} height={16}>
+            <AstroIcon name={SIGNS_EN_MAP[sign] || 'aries'} className="w-4 h-4 text-purple-300 opacity-60" />
+          </foreignObject>
         ))}
 
-        {/* Aspect lines */}
         {(chart.aspects || []).slice(0, 15).map((aspect: any, i: number) => {
           const p1 = chart.planets?.[aspect.planet1];
           const p2 = chart.planets?.[aspect.planet2];
@@ -164,23 +166,19 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
           );
         })}
 
-        {/* Planets */}
         {Object.entries(chart.planets || {}).map(([key, planet]: any) => {
           const signIndex = SIGNS.indexOf(chart.sun_sign || 'Áries');
           const angle = (SIGNS.indexOf(planet.sign) * 30 + planet.degree - signIndex * 30 - 90) * Math.PI / 180;
           const pr = 65;
           const px = cx + pr * Math.cos(angle);
           const py = cy + pr * Math.sin(angle);
-          const emoji = ({ sun: '☀', moon: '☽', mercury: '☿', venus: '♀', mars: '♂', jupiter: '♃', saturn: '♄', uranus: '♅', neptune: '♆', pluto: '♇' } as Record<string, string>)[key] || '·';
           return (
-            <g key={key}>
-              <circle cx={px} cy={py} r={8} fill="rgba(13,13,43,0.9)" stroke="rgba(124,58,237,0.5)" strokeWidth="1" />
-              <text x={px} y={py + 1} textAnchor="middle" dominantBaseline="middle" fontSize="8" fill="#A78BFA">{emoji}</text>
-            </g>
+            <foreignObject key={key} x={px - 7} y={py - 7} width={14} height={14}>
+              <AstroIcon name={key} className="w-3 h-3 text-purple-300" />
+            </foreignObject>
           );
         })}
 
-        {/* Center */}
         <circle cx={cx} cy={cy} r={4} fill="#D4AF37" opacity="0.8" />
       </svg>
     );
@@ -196,12 +194,10 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
           {chart.ascendant && ` · ⬆️ ${chart.ascendant}`}
         </p>
 
-        {/* SVG Chart */}
         <div className="glass-card p-4 mb-6">
           <ChartSVG />
         </div>
 
-        {/* Menu de Abas Padronizado */}
         <div className="flex mb-4 w-full">
           <div className="glass-card flex w-full p-1 rounded-full border-cosmic-border">
             {[
@@ -231,7 +227,6 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
           </div>
         </div>
 
-        {/* Conteúdo das Abas com Transição Fluida */}
         <AnimatePresence mode="wait">
           <motion.div
             key={tab}
@@ -240,7 +235,6 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
           >
-            {/* Planets tab */}
             {tab === 'planets' && (
               <div className="space-y-2">
                 {Object.entries(chart.planets || {}).map(([key, planet]: any) => {
@@ -251,7 +245,9 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
                       key={key}
                       className="w-full glass-card p-4 flex items-center gap-3"
                     >
-                      <span className="text-2xl">{({ sun: '☀️', moon: '🌙', mercury: '☿', venus: '♀️', mars: '♂️', jupiter: '⚡', saturn: '🪐', uranus: '💫', neptune: '🌊', pluto: '🔮' } as Record<string, string>)[key] || '⭐'}</span>
+                      <div className="w-8 h-8 rounded-full bg-cosmic-accent/20 flex items-center justify-center text-cosmic-star border border-cosmic-accent/30 shadow-glow">
+                        <AstroIcon name={key} className="w-4 h-4" />
+                      </div>
                       <div className="text-left flex-1">
                         <p className="text-cosmic-star text-sm font-medium">{name}</p>
                         <p className="text-cosmic-muted text-xs">{planet.sign} {planet.house ? `· Casa ${planet.house}` : ''} {planet.retrograde ? '· ℞' : ''}</p>
@@ -267,7 +263,6 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
               </div>
             )}
 
-            {/* Houses tab */}
             {tab === 'houses' && (
               <div className="space-y-2">
                 {Object.entries(chart.houses || {}).map(([num, house]: any) => {
@@ -283,7 +278,7 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
                       key={num}
                       className="w-full glass-card p-4 flex items-center gap-3"
                     >
-                      <span className="text-xl">{info.emoji}</span>
+                      <div className="w-8 h-8 flex items-center justify-center text-xl">{info.emoji}</div>
                       <div className="text-left flex-1">
                         <p className="text-cosmic-star text-sm font-medium">{info.name} — {info.theme}</p>
                         <p className="text-cosmic-muted text-xs">{house.sign} {planetsInHouse.length > 0 ? `· ${planetsInHouse.map(p => p.name).join(', ')}` : ''}</p>
@@ -294,25 +289,22 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
               </div>
             )}
 
-            {/* Aspects tab */}
             {tab === 'aspects' && (
               <div className="space-y-2">
                 {(chart.aspects || []).map((aspect: any, i: number) => {
                   const p1Name = PLANET_NAMES[aspect.planet1] || aspect.planet1;
                   const p2Name = PLANET_NAMES[aspect.planet2] || aspect.planet2;
-                  const aspectNames: Record<string, string> = {
-                    conjunction: 'Conjunção', opposition: 'Oposição', trine: 'Trígono',
-                    square: 'Quadratura', sextile: 'Sextil', quincunx: 'Quincúncio', semisquare: 'Semiquadratura'
-                  };
                   return (
                     <div key={i} className="glass-card p-3 flex items-center gap-3">
-                      <span className="text-lg" style={{ color: ASPECT_COLORS[aspect.type] }}>{aspect.symbol}</span>
+                      <div className="w-6 h-6 flex items-center justify-center text-cosmic-star" style={{ color: ASPECT_COLORS[aspect.type] }}>
+                         <AstroIcon name="aspect" className="w-5 h-5 opacity-70" />
+                      </div>
                       <div className="flex-1">
                         <p className="text-cosmic-star text-sm">
                           {p1Name} — {p2Name}
                         </p>
                         <p className="text-cosmic-muted text-xs">
-                          {aspectNames[aspect.type] || aspect.type} · {aspect.orb}° orbe
+                          {ASPECT_NAMES[aspect.type] || aspect.type} · {aspect.orb}° orbe
                         </p>
                       </div>
                     </div>

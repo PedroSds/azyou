@@ -5,7 +5,8 @@ import {
   ChevronDown, ChevronUp, Trash2, Plus, Sparkles
 } from 'lucide-react';
 import { calculateBirthChart, initAstrology } from '../../services/astrology';
-import { PLANET_NAMES, SIGN_SYMBOLS, SIGNS } from '../../services/astrology';
+import { getMoonPhase, PLANET_NAMES, SIGNS } from '../../services/astrology';
+import { AstroIcon } from '../ui/AstroIcons';
 import { HOUSE_INFO, SIGN_DESCRIPTIONS } from '../../data/astroData';
 import { searchCities, type CityResult } from '../../services/geocoding';
 import { supabase } from '../../services/supabase';
@@ -26,6 +27,14 @@ interface MapCreatorProps {
   onMapCreated?: (map: SavedMap) => void;
   onMapsChanged?: () => void;
 }
+
+const SIGNS_EN_MAP: Record<string, string> = {
+  'Áries': 'aries', 'Touro': 'taurus', 'Gêmeos': 'gemini', 'Câncer': 'cancer',
+  'Leão': 'leo', 'Virgem': 'virgo', 'Libra': 'libra', 'Escorpião': 'scorpio',
+  'Sagitário': 'sagittarius', 'Capricórnio': 'capricorn', 'Aquário': 'aquarius', 'Peixes': 'pisces',
+};
+
+const PLANET_KEYS = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto'];
 
 const MONTHS = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
 
@@ -104,14 +113,12 @@ function MapDetailView({ chart, name }: { chart: any; name: string }) {
             <div className="space-y-1">
               {Object.entries(planets).map(([key, planet]: any) => {
                 const pName = PLANET_NAMES[key] || key;
-                const emojis: Record<string, string> = {
-                  sun: '☀️', moon: '🌙', mercury: '☿', venus: '♀️', mars: '♂️',
-                  jupiter: '⚡', saturn: '🪐', uranus: '💫', neptune: '🌊', pluto: '🔮',
-                };
                 const signInfo = SIGN_DESCRIPTIONS[planet.sign];
                 return (
                   <div key={key} className="glass-card p-3 flex items-center gap-2.5">
-                    <span className="text-lg">{emojis[key] || '⭐'}</span>
+                    <div className="w-8 h-8 rounded-full bg-cosmic-accent/20 flex items-center justify-center text-cosmic-star border border-cosmic-accent/30 shadow-glow">
+                      <AstroIcon name={key} className="w-4 h-4" />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-cosmic-star text-xs font-medium">{pName}</p>
                       <p className="text-cosmic-muted text-[11px]">
@@ -150,7 +157,9 @@ function MapDetailView({ chart, name }: { chart: any; name: string }) {
 
                 return (
                   <div key={num} className="glass-card p-3 flex items-center gap-2.5">
-                    <span className="text-lg">{info.emoji}</span>
+                    <div className="w-6 h-6 flex items-center justify-center text-cosmic-star">
+                      <AstroIcon name={SIGNS_EN_MAP[house.sign] || 'aries'} className="w-4 h-4 opacity-70" />
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-cosmic-star text-xs font-medium">{info.name} — {info.theme}</p>
                       <div className="text-cosmic-muted text-[11px] mt-0.5">
@@ -179,9 +188,9 @@ function MapDetailView({ chart, name }: { chart: any; name: string }) {
                 const p2 = PLANET_NAMES[aspect.planet2] || aspect.planet2;
                 return (
                   <div key={i} className="glass-card p-3 flex items-center gap-2.5">
-                    <span className="text-base" style={{ color: ASPECT_COLORS[aspect.type] || '#fff' }}>
-                      {aspect.symbol || '·'}
-                    </span>
+                    <div className="w-5 h-5 flex items-center justify-center">
+                      <AstroIcon name={aspect.type} className="w-4 h-4" style={{ color: ASPECT_COLORS[aspect.type] || '#fff' }} />
+                    </div>
                     <div className="flex-1">
                       <p className="text-cosmic-star text-xs">{p1} — {p2}</p>
                       <p className="text-cosmic-muted text-[11px]">
@@ -213,7 +222,6 @@ function ChartWheel({ chart }: { chart: any }) {
     const midRotatedAngle = ((i - signIndex + 0.5) * 30 - 90) * Math.PI / 180;
     return {
       sign,
-      symbol: SIGN_SYMBOLS[i],
       x2: cx + (r - 20) * Math.cos(midRotatedAngle),
       y2: cy + (r - 20) * Math.sin(midRotatedAngle),
     };
@@ -227,7 +235,6 @@ function ChartWheel({ chart }: { chart: any }) {
       key,
       px: cx + pr * Math.cos(angle),
       py: cy + pr * Math.sin(angle),
-      emoji: ({ sun: '☀', moon: '☽', mercury: '☿', venus: '♀', mars: '♂', jupiter: '♃', saturn: '♄', uranus: '♅', neptune: '♆', pluto: '♇' } as Record<string, string>)[key] || '·',
     };
   });
 
@@ -253,10 +260,10 @@ function ChartWheel({ chart }: { chart: any }) {
         );
       })}
 
-      {signLabels.map(({ symbol, x2, y2 }, i) => (
-        <text key={i} x={x2} y={y2} textAnchor="middle" dominantBaseline="middle" fontSize="10" fill="rgba(167,139,250,0.7)">
-          {symbol}
-        </text>
+      {signLabels.map(({ sign, x2, y2 }, i) => (
+        <foreignObject key={i} x={x2 - 8} y={y2 - 8} width={16} height={16}>
+          <AstroIcon name={SIGNS_EN_MAP[sign] || 'aries'} className="w-4 h-4 text-purple-300 opacity-60" />
+        </foreignObject>
       ))}
 
       {(chart?.aspects || []).slice(0, 15).map((aspect: any, i: number) => {
@@ -275,11 +282,12 @@ function ChartWheel({ chart }: { chart: any }) {
         );
       })}
 
-      {planetsPositions.map(({ key, px, py, emoji }) => (
-        <g key={key}>
-          <circle cx={px} cy={py} r={8} fill="rgba(13,13,43,0.9)" stroke="rgba(124,58,237,0.5)" strokeWidth="1" />
-          <text x={px} y={py + 1} textAnchor="middle" dominantBaseline="middle" fontSize="8" fill="#A78BFA">{emoji}</text>
-        </g>
+      {planetsPositions.map(({ key, px, py }) => (
+        <foreignObject key={key} x={px - 7} y={py - 7} width={14} height={14}>
+          <div className="w-full h-full flex items-center justify-center rounded-full bg-cosmic-bg border border-cosmic-accent/50">
+             <AstroIcon name={key} className="w-3 h-3 text-purple-300" />
+          </div>
+        </foreignObject>
       ))}
 
       <circle cx={cx} cy={cy} r={4} fill="#D4AF37" opacity="0.8" />
