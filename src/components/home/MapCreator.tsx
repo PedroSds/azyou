@@ -213,56 +213,70 @@ function MapDetailView({ chart, name }: { chart: any; name: string }) {
 
 // ─── Born Chart Wheel (SVG) ───
 function ChartWheel({ chart }: { chart: any }) {
-  const cx = 150, cy = 150, r = 120;
-  const sunSign = chart?.sun?.sign || chart?.sun_sign || 'Áries';
+  const cx = 200, cy = 200, r = 180;
   const planets = chart?.planets || {};
-  const signIndex = SIGNS.indexOf(sunSign) === -1 ? 0 : SIGNS.indexOf(sunSign);
+  const signIndex = SIGNS.indexOf(chart?.sun_sign || 'Áries');
 
   const signLabels = SIGNS.map((sign, i) => {
     const midRotatedAngle = ((i - signIndex + 0.5) * 30 - 90) * Math.PI / 180;
     return {
       sign,
-      x2: cx + (r - 20) * Math.cos(midRotatedAngle),
-      y2: cy + (r - 20) * Math.sin(midRotatedAngle),
+      x2: cx + (r - 15) * Math.cos(midRotatedAngle),
+      y2: cy + (r - 15) * Math.sin(midRotatedAngle),
     };
   });
 
-  const planetsPositions = Object.entries(planets).map(([key, planet]: any) => {
+  const planetsList = Object.entries(planets).map(([key, planet]: any) => {
     const pSignIndex = SIGNS.indexOf(planet.sign);
-    const angle = ((pSignIndex * 30 + (planet.degree || 0) - signIndex * 30 - 90)) * Math.PI / 180;
-    const pr = 65;
+    const angleDeg = (pSignIndex * 30 + (planet.degree || 0) - signIndex * 30 - 90);
+    return { key, planet, angleDeg };
+  }).sort((a, b) => a.angleDeg - b.angleDeg);
+
+  const planetsPositions = planetsList.map((p, i, arr) => {
+    let collisionCount = 0;
+    for (let j = i - 1; j >= 0; j--) {
+      const prev = arr[j];
+      if (p.angleDeg - prev.angleDeg < 12) {
+         collisionCount++;
+      } else {
+         break;
+      }
+    }
+    const pR = 135 - (collisionCount * 22);
+    const angleRad = p.angleDeg * Math.PI / 180;
     return {
-      key,
-      px: cx + pr * Math.cos(angle),
-      py: cy + pr * Math.sin(angle),
+      key: p.key,
+      px: cx + pR * Math.cos(angleRad),
+      py: cy + pR * Math.sin(angleRad),
     };
   });
 
   return (
-      <svg viewBox="0 0 300 300" className="w-full max-w-[320px] mx-auto filter drop-shadow-md">
-        <circle cx={cx} cy={cy} r={r} fill="rgba(255,255,255,0.03)" stroke="rgba(167,139,250,0.5)" strokeWidth="1" />
-        <circle cx={cx} cy={cy} r={r - 20} fill="rgba(255,255,255,0.02)" stroke="rgba(167,139,250,0.3)" strokeWidth="0.5" />
-        <circle cx={cx} cy={cy} r={80} fill="rgba(0,0,0,0.15)" stroke="rgba(167,139,250,0.2)" strokeWidth="0.5" />
-        <circle cx={cx} cy={cy} r={40} fill="rgba(0,0,0,0.1)" stroke="rgba(212,175,55,0.2)" strokeWidth="0.5" />
+      <svg viewBox="0 0 400 400" className="w-full max-w-[400px] mx-auto filter drop-shadow-sm">
+        <circle cx={cx} cy={cy} r={r} fill="#FAFAFA" stroke="#B39EB5" strokeWidth="2" />
+        <circle cx={cx} cy={cy} r={r - 30} fill="none" stroke="#B39EB5" strokeWidth="1" />
+        <circle cx={cx} cy={cy} r={110} fill="#F3F0F5" stroke="#B39EB5" strokeWidth="1" />
+        <circle cx={cx} cy={cy} r={50} fill="#EAE5ED" stroke="#B39EB5" strokeWidth="1" />
 
         {Array.from({ length: 12 }, (_, i) => {
           const angle = ((i - signIndex) * 30 - 90) * Math.PI / 180;
           return (
             <line
               key={i}
-              x1={cx + 60 * Math.cos(angle)}
-              y1={cy + 60 * Math.sin(angle)}
+              x1={cx + 80 * Math.cos(angle)}
+              y1={cy + 80 * Math.sin(angle)}
               x2={cx + r * Math.cos(angle)}
               y2={cy + r * Math.sin(angle)}
-              stroke="rgba(167,139,250,0.3)"
-              strokeWidth="0.5"
+              stroke="#B39EB5"
+              strokeWidth="1"
+              opacity="0.6"
             />
           );
         })}
 
         {signLabels.map(({ sign, x2, y2 }, i) => (
-          <foreignObject key={i} x={x2 - 8} y={y2 - 8} width={16} height={16}>
-            <AstroIcon name={SIGNS_EN_MAP[sign] || 'aries'} className="w-4 h-4 text-purple-200 opacity-80" />
+          <foreignObject key={i} x={x2 - 10} y={y2 - 10} width={20} height={20}>
+            <AstroIcon name={SIGNS_EN_MAP[sign] || 'aries'} className="w-5 h-5 text-[#B39EB5]" />
           </foreignObject>
         ))}
 
@@ -275,22 +289,22 @@ function ChartWheel({ chart }: { chart: any }) {
           const lon1 = (p1SignI * 30 + (p1.degree || 0) - signIndex * 30 - 90) * Math.PI / 180;
           const lon2 = (p2SignI * 30 + (p2.degree || 0) - signIndex * 30 - 90) * Math.PI / 180;
           return (
-            <line key={i} x1={cx + 70 * Math.cos(lon1)} y1={cy + 70 * Math.sin(lon1)}
-              x2={cx + 70 * Math.cos(lon2)} y2={cy + 70 * Math.sin(lon2)}
-              stroke={ASPECT_COLORS[aspect.type] || '#ffffff'}
-              strokeWidth="0.8" opacity="0.6" />
+            <line key={i} x1={cx + 100 * Math.cos(lon1)} y1={cy + 100 * Math.sin(lon1)}
+              x2={cx + 100 * Math.cos(lon2)} y2={cy + 100 * Math.sin(lon2)}
+              stroke={ASPECT_COLORS[aspect.type] || '#B39EB5'}
+              strokeWidth="1.2" opacity="0.8" />
           );
         })}
 
         {planetsPositions.map(({ key, px, py }) => (
-          <foreignObject key={key} x={px - 8} y={py - 8} width={16} height={16}>
-            <div className="w-full h-full flex items-center justify-center rounded-full bg-cosmic-bg/40 border border-white/20 backdrop-blur-md shadow-[0_0_8px_rgba(167,139,250,0.4)]">
-               <AstroIcon name={key} className="w-3.5 h-3.5 text-white" />
+          <foreignObject key={key} x={px - 9} y={py - 9} width={18} height={18}>
+            <div className="w-full h-full flex items-center justify-center rounded-full bg-[#B39EB5] border border-white shadow-sm">
+               <AstroIcon name={key} className="w-4 h-4 text-white" />
             </div>
           </foreignObject>
         ))}
 
-        <circle cx={cx} cy={cy} r={4} fill="#D4AF37" opacity="0.8" />
+        <circle cx={cx} cy={cy} r={6} fill="#000000" opacity="0.8" />
       </svg>
   );
 }
