@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Sparkles, RefreshCw, Heart, Coins, Brain, Zap } from 'lucide-react';
+import { ChevronRight, Sparkles, RefreshCw } from 'lucide-react';
 import { useUserStore } from '../../stores/userStore';
 import { getQuickAIResponse } from '../../services/aiChat';
 import { getMoonPhase } from '../../services/astrology';
 import { calculateDailyTransits, getTopTransitsByCategory, formatTransitForPrompt } from '../../services/transits';
 import type { AstroContext } from '../../services/aiChat';
+import { AstroIcon } from '../../components/ui/AstroIcons';
 
 const AREA_CARDS = [
-  { key: 'love', icon: Heart, label: 'Amor', color: 'bg-rose-50', border: 'border-rose-100', iconColor: 'text-rose-500' },
-  { key: 'money', icon: Coins, label: 'Finanças', color: 'bg-emerald-50', border: 'border-emerald-100', iconColor: 'text-emerald-500' },
-  { key: 'emotions', icon: Brain, label: 'Emoções', color: 'bg-blue-50', border: 'border-blue-100', iconColor: 'text-blue-500' },
-  { key: 'energy', icon: Zap, label: 'Energia', color: 'bg-amber-50', border: 'border-amber-100', iconColor: 'text-amber-500' },
+  { key: 'love', iconName: 'venus', label: 'Amor', color: 'bg-rose-50', border: 'border-rose-100', iconColor: 'text-rose-500' },
+  { key: 'money', iconName: 'jupiter', label: 'Finanças', color: 'bg-emerald-50', border: 'border-emerald-100', iconColor: 'text-emerald-500' },
+  { key: 'emotions', iconName: 'moon', label: 'Emoções', color: 'bg-blue-50', border: 'border-blue-100', iconColor: 'text-blue-500' },
+  { key: 'energy', iconName: 'mars', label: 'Energia', color: 'bg-amber-50', border: 'border-amber-100', iconColor: 'text-amber-500' },
 ];
 
 export default function DailyHoroscope({ hideHeader }: { hideHeader?: boolean }) {
@@ -206,14 +207,14 @@ Retorne APENAS um JSON válido (sem markdown):
 
       {/* Area cards */}
       <div className="grid grid-cols-2 gap-3 mb-6">
-        {AREA_CARDS.map(({ key, icon: Icon, label, color, border, iconColor }) => (
+        {AREA_CARDS.map(({ key, iconName, label, color, border, iconColor }) => (
           <motion.button
             key={key}
             onClick={() => setActiveCard(activeCard === key ? null : key)}
             className={`glass-card p-4 text-left ${color} border ${border} hover:border-cosmic-purple transition-all duration-200 active:scale-95`}
           >
             <div className={`w-8 h-8 rounded-full bg-white/50 flex items-center justify-center mb-3 shadow-sm ${iconColor}`}>
-              <Icon size={18} strokeWidth={2.5} />
+              <AstroIcon name={iconName} className="w-5 h-5" />
             </div>
             <p className="text-cosmic-star text-sm font-medium">{label}</p>
             {loading ? (

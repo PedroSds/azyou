@@ -158,8 +158,8 @@ Seja criativo(a), específico(a) e inspirador(a). 2-3 parágrafos.`;
                           {ASTRO_EVENTS.map((event, i) => (
                             <div key={i} className="glass-card p-4">
                               <div className="flex items-start gap-3">
-                                <div className="w-10 h-10 rounded-full bg-cosmic-bg flex items-center justify-center border border-cosmic-border shrink-0">
-                                  <AstroIcon name={event.icon} className="w-5 h-5 text-purple-300" />
+                                <div className="w-10 h-10 rounded-full bg-cosmic-bg flex items-center justify-center border border-cosmic-border shrink-0 shadow-sm">
+                                  <AstroIcon name={event.icon} className="w-5 h-5 text-[#B39EB5]" />
                                 </div>
                                 <div className="flex-1">
                                   <p className="text-cosmic-star font-medium text-sm">{event.name}</p>
@@ -254,10 +254,10 @@ Seja criativo(a), específico(a) e inspirador(a). 2-3 parágrafos.`;
                       {id === 'venus-style' && venusStyle && (
                         <div className="glass-card p-5">
                           <div className="text-center mb-4">
-                            <div className="w-16 h-16 rounded-full bg-cosmic-accent/20 mx-auto flex items-center justify-center text-cosmic-star border border-cosmic-accent/30 shadow-glow mb-4">
-                               <AstroIcon name="venus" className="w-8 h-8 text-purple-300" />
+                            <div className="w-16 h-16 rounded-full bg-white mx-auto flex items-center justify-center border border-[#B39EB5]/30 shadow-sm mb-4">
+                               <AstroIcon name="venus" className="w-8 h-8 text-[#B39EB5]" />
                             </div>
-                            <p className="text-cosmic-lilac text-sm">Vênus em {chart.venus_sign}</p>
+                            <p className="text-cosmic-star text-sm">Vênus em {chart.venus_sign}</p>
                             <p className="text-cosmic-star font-serif text-lg mt-1">{venusStyle.style}</p>
                           </div>
                           <p className="text-cosmic-text text-sm leading-relaxed mb-4">{venusStyle.description}</p>

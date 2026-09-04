@@ -238,8 +238,53 @@ export const AstroIcons: Record<string, React.FC<React.SVGProps<SVGSVGElement>>>
   )
 };
 
+const ICON_NAME_MAP: Record<string, string> = {
+  // Planetas (PT -> EN)
+  'sol': 'sun',
+  'lua': 'moon',
+  'mercúrio': 'mercury',
+  'vênus': 'venus',
+  'marte': 'mars',
+  'júpiter': 'jupiter',
+  'saturno': 'saturn',
+  'urano': 'uranus',
+  'netuno': 'neptune',
+  'plutão': 'pluto',
+  'ascendente': 'ascendant',
+  'meio do céu': 'midheaven',
+  'nódulo norte': 'node',
+  'quirón': 'chiron',
+  'lilith': 'lilith',
+  
+  // Signos (PT -> EN)
+  'áries': 'aries',
+  'touro': 'taurus',
+  'gêmeos': 'gemini',
+  'câncer': 'cancer',
+  'leão': 'leo',
+  'virgem': 'virgo',
+  'libra': 'libra',
+  'escorpião': 'scorpio',
+  'sagitário': 'sagittarius',
+  'capricórnio': 'capricorn',
+  'aquário': 'aquarius',
+  'peixes': 'pisces',
+
+  // Aspectos
+  'conjunção': 'conjunction',
+  'oposição': 'opposition',
+  'trígono': 'trine',
+  'quadratura': 'square',
+  'sextil': 'sextile',
+  'quincúncio': 'quincunx',
+};
+
 export function AstroIcon({ name, ...props }: AstroIconProps) {
-  const Icon = AstroIcons[name.toLowerCase()];
+  if (!name) return null;
+  const rawName = name.toLowerCase().trim();
+  const mappedName = ICON_NAME_MAP[rawName] || rawName;
+  const Icon = AstroIcons[mappedName];
+  
   if (!Icon) {
     // Fallback if icon not found
     return (
