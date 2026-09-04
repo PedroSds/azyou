@@ -114,14 +114,14 @@ Escreva a leitura do dia de forma empática e poética, citando os astros envolv
 
 Retorne APENAS um JSON válido (sem markdown):
 {
-  "mainPhrase": "1-2 frases inspiradoras sobre a energia principal do dia, baseada no trânsito mais importante",
+  "mainPhrase": "Um mantra curto e poético (preferencialmente em primeira pessoa, ex: 'Eu permito...') que resuma a energia principal do dia",
   "areas": {
     "love": "2-3 frases sobre amor baseadas DIRETAMENTE nos trânsitos de amor acima",
     "money": "2-3 frases sobre finanças baseadas DIRETAMENTE nos trânsitos de dinheiro acima",
     "emotions": "2-3 frases sobre emoções baseadas DIRETAMENTE nos trânsitos emocionais acima",
     "energy": "2-3 frases sobre energia vital baseadas DIRETAMENTE nos trânsitos de energia acima"
   },
-  "advice": "1 conselho prático e específico baseado no trânsito mais importante do dia"
+  "advice": "Um conselho prático e acolhedor que seja uma CONTINUAÇÃO e uma RESPOSTA DIRETA ao mantra gerado. Ele deve explicar como colocar a intenção do mantra em prática hoje."
 }`;
 
       const responseText = await getQuickAIResponse(prompt, context);
@@ -183,26 +183,47 @@ Retorne APENAS um JSON válido (sem markdown):
         </div>
       )}
 
-      {/* Main phrase (Mantra) */}
+      {/* Main phrase (Mantra) & Advice */}
       <motion.div
         layout
-        className="glass-card p-5 sm:p-6 mb-6 relative overflow-hidden shadow-sm"
+        className="glass-card mb-6 relative overflow-hidden shadow-sm"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
-        <h3 className="text-black text-xs md:text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-          <Sparkles size={14} className="text-cosmic-purple" /> Mantra do dia
-        </h3>
-        {loading ? (
-          <div className="space-y-2">
-            <div className="h-4 bg-gray-200 rounded animate-pulse" />
-            <div className="h-4 bg-gray-200 rounded animate-pulse w-4/5" />
-          </div>
-        ) : (
-          <p className="text-cosmic-text text-base leading-relaxed">
-            "{mainPhrase}"
-          </p>
-        )}
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#B39EB5]/10 rounded-full blur-2xl pointer-events-none" />
+        
+        <div className="p-6">
+          <h3 className="text-[#B39EB5] text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mb-4">
+            Mantra
+          </h3>
+          
+          {loading ? (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                <div className="h-4 bg-gray-200 rounded animate-pulse w-4/5" />
+              </div>
+              <div className="h-px bg-[#B39EB5]/10 w-full" />
+              <div className="space-y-2">
+                <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4" />
+                <div className="h-3 bg-gray-200 rounded animate-pulse w-1/2" />
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <p className="text-cosmic-star font-serif text-lg sm:text-xl leading-relaxed italic pr-4">
+                "{mainPhrase}"
+              </p>
+              
+              {advice && (
+                <div className="relative pl-5 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:bg-[#B39EB5]/30 before:rounded-full">
+                  <h4 className="text-cosmic-star text-[10px] font-bold uppercase tracking-widest mb-1">Conselho</h4>
+                  <p className="text-cosmic-muted text-sm leading-relaxed">{advice}</p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </motion.div>
 
       {/* Area cards */}
@@ -232,19 +253,6 @@ Retorne APENAS um JSON válido (sem markdown):
         ))}
       </div>
 
-      {/* Daily advice */}
-      {advice && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-5 sm:p-6 mb-6 shadow-sm"
-        >
-          <h3 className="text-black text-xs md:text-sm font-bold uppercase tracking-widest mb-3 flex items-center gap-2">
-            <Sparkles size={14} className="text-cosmic-purple" /> Conselho do dia
-          </h3>
-          <p className="text-cosmic-text text-base leading-relaxed">{advice}</p>
-        </motion.div>
-      )}
     </div>
   );
 }
