@@ -217,7 +217,7 @@ Retorne APENAS um JSON válido (sem markdown):
               
               {advice && (
                 <div className="relative pl-5 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:bg-[#B39EB5]/30 before:rounded-full">
-                  <h4 className="text-cosmic-star text-[10px] font-bold uppercase tracking-widest mb-1">Conselho</h4>
+                  <h4 className="text-[#B39EB5] text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] mb-1">Conselho</h4>
                   <p className="text-cosmic-muted text-sm leading-relaxed">{advice}</p>
                 </div>
               )}
