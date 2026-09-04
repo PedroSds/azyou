@@ -278,7 +278,9 @@ Seja específico(a) para ${profile.name} e pratique. 2-3 parágrafos.`;
                       key={num}
                       className="w-full glass-card p-4 flex items-center gap-3"
                     >
-                      <div className="w-8 h-8 flex items-center justify-center text-xl">{info.emoji}</div>
+                      <div className="w-8 h-8 rounded-full bg-cosmic-accent/20 flex items-center justify-center text-cosmic-star border border-cosmic-accent/30 shadow-glow">
+                        <AstroIcon name={SIGNS_EN_MAP[house.sign] || 'aries'} className="w-4 h-4 opacity-70" />
+                      </div>
                       <div className="text-left flex-1">
                         <p className="text-cosmic-star text-sm font-medium">{info.name} — {info.theme}</p>
                         <p className="text-cosmic-muted text-xs">{house.sign} {planetsInHouse.length > 0 ? `· ${planetsInHouse.map(p => p.name).join(', ')}` : ''}</p>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Sparkles, RefreshCw } from 'lucide-react';
+import { ChevronRight, Sparkles, RefreshCw, Heart, Coins, Brain, Zap } from 'lucide-react';
 import { useUserStore } from '../../stores/userStore';
 import { getQuickAIResponse } from '../../services/aiChat';
 import { getMoonPhase } from '../../services/astrology';
@@ -8,10 +8,10 @@ import { calculateDailyTransits, getTopTransitsByCategory, formatTransitForPromp
 import type { AstroContext } from '../../services/aiChat';
 
 const AREA_CARDS = [
-  { key: 'love', emoji: '❤️', label: 'Amor', color: 'bg-white', border: 'border-cosmic-border' },
-  { key: 'money', emoji: '💰', label: 'Dinheiro', color: 'bg-white', border: 'border-cosmic-border' },
-  { key: 'emotions', emoji: '🧠', label: 'Emoções', color: 'bg-white', border: 'border-cosmic-border' },
-  { key: 'energy', emoji: '⚡', label: 'Energia', color: 'bg-white', border: 'border-cosmic-border' },
+  { key: 'love', icon: Heart, label: 'Amor', color: 'bg-rose-50', border: 'border-rose-100', iconColor: 'text-rose-500' },
+  { key: 'money', icon: Coins, label: 'Finanças', color: 'bg-emerald-50', border: 'border-emerald-100', iconColor: 'text-emerald-500' },
+  { key: 'emotions', icon: Brain, label: 'Emoções', color: 'bg-blue-50', border: 'border-blue-100', iconColor: 'text-blue-500' },
+  { key: 'energy', icon: Zap, label: 'Energia', color: 'bg-amber-50', border: 'border-amber-100', iconColor: 'text-amber-500' },
 ];
 
 export default function DailyHoroscope({ hideHeader }: { hideHeader?: boolean }) {
@@ -206,13 +206,15 @@ Retorne APENAS um JSON válido (sem markdown):
 
       {/* Area cards */}
       <div className="grid grid-cols-2 gap-3 mb-6">
-        {AREA_CARDS.map(({ key, emoji, label, color, border }) => (
+        {AREA_CARDS.map(({ key, icon: Icon, label, color, border, iconColor }) => (
           <motion.button
             key={key}
             onClick={() => setActiveCard(activeCard === key ? null : key)}
             className={`glass-card p-4 text-left ${color} border ${border} hover:border-cosmic-purple transition-all duration-200 active:scale-95`}
           >
-            <span className="text-2xl mb-2 block">{emoji}</span>
+            <div className={`w-8 h-8 rounded-full bg-white/50 flex items-center justify-center mb-3 shadow-sm ${iconColor}`}>
+              <Icon size={18} strokeWidth={2.5} />
+            </div>
             <p className="text-cosmic-star text-sm font-medium">{label}</p>
             {loading ? (
               <div className="mt-2 h-2 bg-gray-200 rounded animate-pulse" />

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Sparkles } from 'lucide-react';
+import { ChevronRight, Sparkles, CalendarDays, Heart, Moon, Briefcase, Star } from 'lucide-react';
 import { useUserStore } from '../stores/userStore';
 import { getQuickAIResponse } from '../services/aiChat';
 import { calculatePersonalArcanum, calculateYearArcanum, getMoonPhase, getCurrentTransits, PLANET_NAMES } from '../services/astrology';
@@ -8,22 +8,23 @@ import { ARCANUM_INFO } from '../data/tarot';
 import { VENUS_STYLE } from '../data/astroData';
 import AppLayout from '../components/layout/AppLayout';
 import DailyCard from '../components/home/DailyCard';
+import { AstroIcon } from '../components/ui/AstroIcons';
 import type { AstroContext } from '../services/aiChat';
 
 const DISCOVER_SECTIONS = [
-  { id: 'events', emoji: '🪐', label: 'Eventos Astrológicos' },
-  { id: 'arcanum', emoji: '🃏', label: 'Arcano Pessoal' },
-  { id: 'year-arcanum', emoji: '📅', label: 'Arcano do Ano' },
-  { id: 'venus-style', emoji: '👗', label: 'Estilo segundo Vênus' },
+  { id: 'events', icon: CalendarDays, label: 'Eventos Astrológicos' },
+  { id: 'arcanum', icon: Sparkles, label: 'Arcano Pessoal' },
+  { id: 'year-arcanum', icon: CalendarDays, label: 'Arcano do Ano' },
+  { id: 'venus-style', icon: Heart, label: 'Estilo segundo Vênus' },
 ];
 
 // Astrological events (static + calculated)
 const ASTRO_EVENTS = [
-  { name: 'Lua Nova em Virgem', emoji: '🌑', date: '2026-09-07', type: 'Lua Nova', description: 'Momento de plantar novas intenções, especialmente em saúde, rotinas e serviço.' },
-  { name: 'Mercúrio Direto', emoji: '☿️', date: '2026-09-12', type: 'Trânsito', description: 'Mercúrio retoma seu movimento direto. Comunicações e decisões voltam ao normal.' },
-  { name: 'Lua Cheia em Peixes', emoji: '🌕', date: '2026-09-21', type: 'Lua Cheia', description: 'Culminação de ciclos emocionais e espirituais. Sensibilidade e intuição em alta.' },
-  { name: 'Eclipse Solar em Libra', emoji: '🌘', date: '2026-10-14', type: 'Eclipse', description: 'Poderoso eclipse marcando novos começos em relacionamentos, parcerias e equilíbrio.' },
-  { name: 'Vênus em Escorpião', emoji: '♀️', date: '2026-10-05', type: 'Ingresso', description: 'Vênus em Escorpião intensifica emoções, atração e profundidade nos relacionamentos.' },
+  { name: 'Lua Nova em Virgem', icon: 'moon', date: '2026-09-07', type: 'Lua Nova', description: 'Momento de plantar novas intenções, especialmente em saúde, rotinas e serviço.' },
+  { name: 'Mercúrio Direto', icon: 'mercury', date: '2026-09-12', type: 'Trânsito', description: 'Mercúrio retoma seu movimento direto. Comunicações e decisões voltam ao normal.' },
+  { name: 'Lua Cheia em Peixes', icon: 'moon', date: '2026-09-21', type: 'Lua Cheia', description: 'Culminação de ciclos emocionais e espirituais. Sensibilidade e intuição em alta.' },
+  { name: 'Eclipse Solar em Libra', icon: 'moon', date: '2026-10-14', type: 'Eclipse', description: 'Poderoso eclipse marcando novos começos em relacionamentos, parcerias e equilíbrio.' },
+  { name: 'Vênus em Escorpião', icon: 'venus', date: '2026-10-05', type: 'Ingresso', description: 'Vênus em Escorpião intensifica emoções, atração e profundidade nos relacionamentos.' },
 ];
 
 export default function Discover() {
@@ -119,17 +120,19 @@ Seja criativo(a), específico(a) e inspirador(a). 2-3 parágrafos.`;
   return (
     <AppLayout>
       <div className="py-6">
-        <h1 className="font-serif text-3xl text-cosmic-star mb-6">🔮 Descobrir</h1>
+        <h1 className="font-serif text-3xl text-cosmic-star mb-6 flex items-center gap-2"><Star className="text-cosmic-gold" /> Descobrir</h1>
 
         {/* Section list */}
         <div className="space-y-3">
-          {DISCOVER_SECTIONS.map(({ id, emoji, label }) => (
+          {DISCOVER_SECTIONS.map(({ id, icon: Icon, label }) => (
             <div key={id}>
               <motion.button
                 onClick={() => setActiveSection(activeSection === id ? null : id)}
                 className="w-full glass-card p-4 flex items-center gap-3 hover:border-cosmic-accent/30 transition-all active:scale-98"
               >
-                <span className="text-2xl">{emoji}</span>
+                <div className="w-8 h-8 rounded-full bg-cosmic-accent/10 flex items-center justify-center">
+                    <Icon size={16} className="text-cosmic-accent" />
+                </div>
                 <span className="text-cosmic-star font-medium flex-1 text-left">{label}</span>
                 <ChevronRight size={16} className={`text-cosmic-muted transition-transform ${activeSection === id ? 'rotate-90' : ''}`} />
               </motion.button>
@@ -155,7 +158,9 @@ Seja criativo(a), específico(a) e inspirador(a). 2-3 parágrafos.`;
                           {ASTRO_EVENTS.map((event, i) => (
                             <div key={i} className="glass-card p-4">
                               <div className="flex items-start gap-3">
-                                <span className="text-2xl">{event.emoji}</span>
+                                <div className="w-10 h-10 rounded-full bg-cosmic-bg flex items-center justify-center border border-cosmic-border shrink-0">
+                                  <AstroIcon name={event.icon} className="w-5 h-5 text-purple-300" />
+                                </div>
                                 <div className="flex-1">
                                   <p className="text-cosmic-star font-medium text-sm">{event.name}</p>
                                   <p className="text-cosmic-muted text-xs">{new Date(event.date).toLocaleDateString('pt-BR', { day: 'numeric', month: 'long' })} · {event.type}</p>
@@ -189,7 +194,9 @@ Seja criativo(a), específico(a) e inspirador(a). 2-3 parágrafos.`;
                       {id === 'arcanum' && arcanoInfo && (
                         <div className="glass-card p-5">
                           <div className="text-center mb-4">
-                            <div className="text-5xl mb-2">🃏</div>
+                            <div className="w-16 h-16 rounded-full bg-cosmic-accent/20 mx-auto flex items-center justify-center text-cosmic-star border border-cosmic-accent/30 shadow-glow mb-4">
+                              <Sparkles size={28} />
+                            </div>
                             <p className="text-cosmic-gold font-serif text-2xl">{personalArcanum}</p>
                             <p className="text-cosmic-star font-serif text-xl">{arcanoInfo.name}</p>
                             <p className="text-cosmic-muted text-sm">{arcanoInfo.theme}</p>
@@ -197,11 +204,13 @@ Seja criativo(a), específico(a) e inspirador(a). 2-3 parágrafos.`;
                           <p className="text-cosmic-text text-sm leading-relaxed mb-4">{arcanoInfo.personality}</p>
                           <div className="grid grid-cols-2 gap-3 mb-4">
                             {[
-                              { emoji: '❤️', label: 'Amor', text: arcanoInfo.love },
-                              { emoji: '💼', label: 'Carreira', text: arcanoInfo.career },
-                            ].map(({ emoji, label, text }) => (
+                              { icon: Heart, label: 'Amor', text: arcanoInfo.love },
+                              { icon: Briefcase, label: 'Carreira', text: arcanoInfo.career },
+                            ].map(({ icon: Icon, label, text }) => (
                               <div key={label} className="bg-white/5 rounded-xl p-3">
-                                <p className="text-xs text-cosmic-muted mb-1">{emoji} {label}</p>
+                                <p className="text-xs text-cosmic-muted mb-1 flex items-center gap-1">
+                                  <Icon size={12} /> {label}
+                                </p>
                                 <p className="text-xs text-cosmic-text leading-relaxed">{text}</p>
                               </div>
                             ))}
@@ -229,7 +238,9 @@ Seja criativo(a), específico(a) e inspirador(a). 2-3 parágrafos.`;
                       {/* ARCANO DO ANO */}
                       {id === 'year-arcanum' && yearArcanoInfo && (
                         <div className="glass-card p-5 text-center">
-                          <div className="text-5xl mb-2">📅</div>
+                          <div className="w-16 h-16 rounded-full bg-cosmic-accent/20 mx-auto flex items-center justify-center text-cosmic-star border border-cosmic-accent/30 shadow-glow mb-4">
+                            <CalendarDays size={28} />
+                          </div>
                           <p className="text-cosmic-muted text-sm mb-1">Seu Arcano de {new Date().getFullYear()}</p>
                           <p className="text-cosmic-gold font-serif text-2xl">{yearArcanum}</p>
                           <p className="text-cosmic-star font-serif text-xl mb-4">{yearArcanoInfo.name}</p>
@@ -243,7 +254,9 @@ Seja criativo(a), específico(a) e inspirador(a). 2-3 parágrafos.`;
                       {id === 'venus-style' && venusStyle && (
                         <div className="glass-card p-5">
                           <div className="text-center mb-4">
-                            <div className="text-4xl mb-2">👗</div>
+                            <div className="w-16 h-16 rounded-full bg-cosmic-accent/20 mx-auto flex items-center justify-center text-cosmic-star border border-cosmic-accent/30 shadow-glow mb-4">
+                               <AstroIcon name="venus" className="w-8 h-8 text-purple-300" />
+                            </div>
                             <p className="text-cosmic-lilac text-sm">Vênus em {chart.venus_sign}</p>
                             <p className="text-cosmic-star font-serif text-lg mt-1">{venusStyle.style}</p>
                           </div>
